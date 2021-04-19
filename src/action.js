@@ -11,7 +11,7 @@ async function run(){
         const { pull_request } =  context.payload;
 
         console.log('Starting function execution...');
-
+        console.log(JSON.stringify(context));
         await octokit.issues.createComment({
             ...context.repo,
             issue_number: pull_request.issue_number,
