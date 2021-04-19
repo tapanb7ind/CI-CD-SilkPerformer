@@ -1,0 +1,12 @@
+name: 'Validate PR Action'
+description: 'Get PR context for a specific PR'
+author: 'RestlessGoose'
+
+inputs:
+  prNum:
+    description: 'Provide the PR# to run against'
+    required: true
+
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
