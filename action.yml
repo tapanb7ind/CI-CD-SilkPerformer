@@ -2,9 +2,12 @@ name: 'Validate PR Action'
 description: 'Get PR context for a specific PR'
 author: 'RestlessGoose'
 
-inputs:
+inputs:  
   prNum:
     description: 'Provide the PR# to run against'
+    required: true
+  GITHUB_TOKEN:
+    description: 'GitHub token'
     required: true
 
 runs:
