@@ -87,7 +87,7 @@ async function main(){
             */
             if(canContinue){
                 console.log(`[INFO] Extracted ${filesInPR.length} files in Pull-Request [${PR_NUM}]`);
-                if(ihProps){
+                if(prProps){
                     console.log(`[DEBUG] Validating Files as per props from PR-Title`)
                     console.log(prProps);
                 }
@@ -102,8 +102,8 @@ async function main(){
                 core.setFailed(`There are 0 files extracted the PR details`); 
             }
         }catch(error){
-            console.log(repo)
             console.log(`[ERROR] Something was wrong in executing this action. Please check the logs above. [${error.message}]`);
+            console.log(`Repo:\n${JSON.stringify(repo)}`);
         }
         finally{
             console.log('[INFO] Ending function execution...');
