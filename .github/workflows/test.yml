@@ -17,6 +17,14 @@ on:
         description: 'Regex to validate PR Title'
         required: false
         default: 'IH-\d+:[\w\-]{36}:type\-[data|script]+:.+'
+      scriptTypeAllowedExtensionsCSV:
+        description: 'For PR of "script" type, which file extensions are allowed (each separated by comma)'
+        required: true
+        default: '.bdf,.bdh'
+      dataTypeAllowedExtensionsCSV:
+        description: 'For PR of "data" type, which file extensions are allowed (each separated by comma)'
+        required: true
+        default: '.csv,.dll,.txt,.exe,.config'
       AdditionalInfo:
         description: 'Anything to add to the Workflow run'
         required: false
