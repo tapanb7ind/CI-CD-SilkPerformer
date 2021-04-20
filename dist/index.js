@@ -6099,9 +6099,26 @@ async function main(){
 }
 
 
-// async function GetCommitsInPR(pull_request_number){
-//     return null;
-// }
+async function GetFilesInPR(pull_request_number, octokit_ref, _owner, _repo, _pull_number){    
+    let pull_request_files = await octokit_ref.request(`GET /repos/${_owner}/${_repo}/pulls/${_pull_number}/files`, {
+        owner: _owner,
+        repo: _repo,
+        pull_number: _pull_number
+      });
+
+    let filesInPR = [];
+    try{
+    if(pull_request_files)
+        filesInPR.push(pull_request_files.data.map(itm => {
+            return { name: itm.filename, sha: itm.sha, status: itm.status, blob: itm.blob_url, raw: itm.raw_url }
+        }))
+    }catch(error){
+        console.log(`Failed to extract files in PR. [${error.message}]`);
+        console.log(pull_request_files)
+    }finally{
+        console.log(`[DEBUG] Found ${filesInPR.length} files in ${_pull_number}`);
+    }
+}
 
 async function run(){
     try{
