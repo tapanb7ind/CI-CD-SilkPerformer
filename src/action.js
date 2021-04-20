@@ -10,15 +10,16 @@ async function main(){
     // const { pull_request } =  context.payload;
     const { repo } =  context.payload.repository;
     let PR_NUM = 0;
-
+    console.log(repo);
+    console.log(context);
     switch(context.eventName.toLowerCase()){
         case "workflow_dispatch":
             console.log(`[DEBUG] Executing as "workflow_dispatch". [Pull Request# ${context.payload.inputs.prNum}]`);            
             PR_NUM = parseInt(context.payload.inputs.prNum);
             break;
         case "pull_request":
-            console.log(`[DEBUG] Executing as "pull_request". [Pull Request# ${context.payload.inputs.prNum}]`);
-            PR_NUM = parseInt(context.payload.inputs.prNum)
+            console.log(`[DEBUG] Executing as "pull_request". [Pull Request# ${context.payload.number}]`);
+            PR_NUM = parseInt(context.payload.number)
             break;
         default:            
             console.log(context);
