@@ -6052,7 +6052,7 @@ async function main(){
     console.log('Getting execution context..');
     const { context = {} } = github;
     // const { pull_request } =  context.payload;
-    const { repo } =  context.payload.repository;
+    let repo =  context.payload.repository;
     let PR_NUM = 0;
     console.log(repo);
     console.log(context);
