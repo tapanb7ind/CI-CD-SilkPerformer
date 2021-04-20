@@ -40,7 +40,7 @@ async function main(){
     }
     else{        
         let prdata = null;
-        let ihProps = null;
+        let prProps = null;
         let filesInPR = [];
         canContinue = false;        
         try{
@@ -74,19 +74,27 @@ async function main(){
                 }
             }
 
-            ihProps = GetIhProps(prdata.title);
+            prProps = GetIhProps(prdata.title);
             /*
                 Get list of all files changed in the PR
             */
             if(canContinue){
                 filesInPR = await GetFilesInPR(octokit, repo.owner.login, repo.name, PR_NUM);
-                canContinue = filesInPR.length > 0; 
+                canContinue = filesInPR.length > 0;                
             }
             /*
                 Process files found in PR
             */
             if(canContinue){
                 console.log(`[INFO] Extracted ${filesInPR.length} files in Pull-Request [${PR_NUM}]`);
+                if(ihProps){
+                    console.log(`[DEBUG] Validating Files as per props from PR-Title`)
+                    console.log(prProps);
+                }
+                else{
+                    core.setFailed(`Failed to get Props to validate files in PR`);
+                    return;
+                }
             }
             else{
                 console.log(`[ERROR] There are 0 files extracted the PR details`)
