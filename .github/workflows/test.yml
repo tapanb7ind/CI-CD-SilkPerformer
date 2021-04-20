@@ -8,7 +8,11 @@ on:
       prNum:
         description: 'PR Number to run against'
         required: false
-        default: '8'
+        default: '9'
+      PRTitleValidationRequired:
+        decription: 'Flag to disabled pull-request title validation'
+        required: true
+        default: true
       prTitleTemplate:
         description: 'Regex to validate PR Title'
         required: false

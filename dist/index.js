@@ -6079,6 +6079,7 @@ async function main(){
         let prdata = null;
         let filesInPR = [];
         canContinue = false;
+
         try{
             
             console.log(`[DEBUG] Pull-Request [${PR_NUM}] number is valid. Extracting PR details`);
@@ -6092,15 +6093,25 @@ async function main(){
                 console.log(`[DEBUG] Extracted Pull-Request [${PR_NUM}]`);
                 // console.log(JSON.stringify(pull_request));
                 prdata = pull_request.data;
-                if(prdata)
-                    canContinue = true;                
+                if(context.payload.inputs.PRTitleValidationRequired.toLowerCase() === 'true'){
+                    if(ValidatePRTitle(prdata.title, context.payload.inputs.prTitleTemplate)){
+                        if(prdata)
+                            canContinue = true;
+                    }
+                    else{
+                        canContinue = false;
+                        core.setFailed(`PR Title validation failed. [Title:${prdata.title}, Regex: ${context.payload.inputs.prTitleTemplate}]`); 
+                    }
+                }
+                else
+                    console.log(`[WARN] Pull-Request Title validation is DISABLED`);
             }
 
             /*
                 Get list of all files changed in the PR
             */
                 filesInPR = await GetFilesInPR(octokit, repo.owner.login, repo.name, PR_NUM);
-                canContinue = filesInPR > 0; 
+                canContinue = filesInPR.length > 0; 
             /*
                 Process files found in PR
             */
@@ -6120,6 +6131,10 @@ async function main(){
             console.log('[INFO] Ending function execution...');
         }
     }
+}
+
+function ValidatePRTitle(title, regexpattern){
+    return title.match(regexpattern).length === 1;
 }
 
 async function GetFilesInPR(_octokit, _owner, _repo, _pr){
