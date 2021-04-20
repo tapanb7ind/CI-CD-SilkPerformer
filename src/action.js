@@ -13,13 +13,13 @@ async function main(){
     switch(github?.eventName.toLowerCase()){
         case "workflow_dispatch":
             console.log(`[DEBUG] Executing as "workflow_dispatch". [Pull Request# ${github.payload.inputs.prNum}]`);            
-            PR_NUM = parseInt(${github.payload.inputs.prNum});            
+            PR_NUM = parseInt(github.payload.inputs.prNum);
             break;
         case "pull_request":
             console.log(`[DEBUG] Executing as "pull_request". [Pull Request# ${github.payload.inputs.prNum}]`);
-            PR_NUM = parseInt(${github.payload.inputs.prNum})            
+            PR_NUM = parseInt(github.payload.inputs.prNum)
             break;
-        case default:
+        default:
             core.setFailed(`"eventName" [${github?.eventName}] is not valid`);
             break;
     }
@@ -33,14 +33,14 @@ async function main(){
     }
 }
 
-async function GetPRByNumber(pull_request_number){
+// async function GetPRByNumber(pull_request_number){
 
-    return null;
-}
+//     return null;
+// }
 
-async function GetCommitsInPR(pull_request_number){
-    return null;
-}
+// async function GetCommitsInPR(pull_request_number){
+//     return null;
+// }
 
 async function run(){
     try{
