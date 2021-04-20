@@ -6055,7 +6055,7 @@ async function main(){
     // const { pull_request } =  context.payload;
     let repo =  context.payload.repository;
     let PRTitleValidationRequired = true;
-    let regexpattern = '(?<ih>IH\-\d+):(?<testuuid>[\w\-]{36}):type\-(?<updatetype>[data|script]+):(?<rest>.+)'    
+    let regexpattern = ''    
     let PR_NUM = 0;
     switch(context.eventName.toLowerCase()){
         case "workflow_dispatch":
@@ -6067,7 +6067,8 @@ async function main(){
         case "pull_request":
             console.log(`[DEBUG] Executing as "pull_request". [Pull Request# ${context.payload.number}]`);
             PR_NUM = parseInt(context.payload.number)
-            PRTitleValidationRequired = true;            
+            PRTitleValidationRequired = true;
+            regexpattern = 'IH-\d+:[\w\-]{36}:type\-[data|script]+:.+'
             break;
         default:            
             console.log(context);
@@ -6145,8 +6146,9 @@ async function main(){
     }
 }
 
-function GetIhProps(title, regexpattern){    
+function GetIhProps(title){    
     try{
+        let regexpattern = '(?<ih>IH\-\d+):(?<testuuid>[\w\-]{36}):type\-(?<updatetype>[data|script]+):(?<rest>.+)'
         var found = title.match(regexpattern);
         if(found)
             return { IH: found[1], testuuid: found[2], updatetype: found[3], rest: found[4] }
@@ -6156,12 +6158,9 @@ function GetIhProps(title, regexpattern){
     return null;
 }
 
-function ValidatePRTitle(title, regexpattern){
-    let found = null;
-    try{
-        found = title.match(regexpattern);
-        console.log(found)
-        return found.length >= 1;
+function ValidatePRTitle(title, regexpattern){    
+    try{        
+        return title.match(regexpattern).length >= 1;
     }catch(error){        
         console.log(`[WARN] Failed to match RegexPattern [${regexpattern}] for pull_request title [${title}]`)
     }
