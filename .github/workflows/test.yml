@@ -23,7 +23,7 @@ on:
         default: 'Test'
 
 jobs:
-  test:
+  Validate:
     name: ${{ github.event.inputs.AdditionalInfo }} 
     runs-on: ubuntu-latest
     steps:
