@@ -90,7 +90,12 @@ async function main(){
 }
 
 function ValidatePRTitle(title, regexpattern){
-    return title.match(regexpattern).length === 1;
+    try{
+        return title.match(regexpattern).length === 1;
+    }catch(error){
+        console.log(`[WARN] Failed to match RegexPattern [${regexpattern}] for pull_request title [${title}]`)
+    }
+    return false;
 }
 
 async function GetFilesInPR(_octokit, _owner, _repo, _pr){
