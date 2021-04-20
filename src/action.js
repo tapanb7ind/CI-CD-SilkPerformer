@@ -11,17 +11,19 @@ async function main(){
     // const { pull_request } =  context.payload;
     let repo =  context.payload.repository;
     let PRTitleValidationRequired = true;
+    let regexpattern = '/(?<ih>IH-\d+):(?<testuuid>[\w\-]{36}):type\-(?<updatetype>[data|script]+):(?<rest>.+)/'    
     let PR_NUM = 0;
     switch(context.eventName.toLowerCase()){
         case "workflow_dispatch":
             console.log(`[DEBUG] Executing as "workflow_dispatch". [Pull Request# ${context.payload.inputs.prNum}]`);
             PR_NUM = parseInt(context.payload.inputs.prNum);
             PRTitleValidationRequired = context.payload.inputs.PRTitleValidationRequired.toLowerCase() === 'true';
+            regexpattern = context.payload.inputs.prTitleTemplate;
             break;
         case "pull_request":
             console.log(`[DEBUG] Executing as "pull_request". [Pull Request# ${context.payload.number}]`);
             PR_NUM = parseInt(context.payload.number)
-            PRTitleValidationRequired = true;
+            PRTitleValidationRequired = true;            
             break;
         default:            
             console.log(context);
@@ -39,8 +41,7 @@ async function main(){
         let prdata = null;
         let ihProps = null;
         let filesInPR = [];
-        canContinue = false;
-
+        canContinue = false;        
         try{
             
             console.log(`[DEBUG] Pull-Request [${PR_NUM}] number is valid. Extracting PR details`);
@@ -55,13 +56,13 @@ async function main(){
                 // console.log(JSON.stringify(pull_request));
                 prdata = pull_request.data;
                 if(PRTitleValidationRequired){
-                    if(ValidatePRTitle(prdata.title, context.payload.inputs.prTitleTemplate)){
+                    if(ValidatePRTitle(prdata.title, regexpattern)){
                         if(prdata)
                             canContinue = true;
                     }
                     else{
                         canContinue = false;
-                        core.setFailed(`PR Title validation failed. [Title:'${prdata.title}', Regex: ${context.payload.inputs.prTitleTemplate}]`);
+                        core.setFailed(`PR Title validation failed. [Title:'${prdata.title}', Regex: ${regexpattern}]`);
                         return;
                     }
                 }
@@ -100,8 +101,7 @@ async function main(){
     }
 }
 
-function GetIhProps(title){
-    let regexpattern = '/(?<ih>IH-\d+):(?<testuuid>[\w\-]{36}):type\-(?<updatetype>[data|script]+):(?<rest>.+)/'
+function GetIhProps(title, regexpattern){    
     try{
         var found = title.match(regexpattern);
         if(found)
@@ -114,7 +114,7 @@ function GetIhProps(title){
 
 function ValidatePRTitle(title, regexpattern){
     try{
-        return title.match(regexpattern).length === 1;
+        return title.match(regexpattern).length >= 1;
     }catch(error){
         console.log(`[WARN] Failed to match RegexPattern [${regexpattern}] for pull_request title [${title}]`)
     }
