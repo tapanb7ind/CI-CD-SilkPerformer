@@ -6081,7 +6081,7 @@ async function main(){
         canContinue = false;
         try{
             
-            console.log(`[DEBUG] Pull-Request [${PR_NUM}] number is valid. Extracting PR details`);            
+            console.log(`[DEBUG] Pull-Request [${PR_NUM}] number is valid. Extracting PR details`);
             let pull_request = await octokit.request(`GET /repos/${repo.owner.login}/${repo.name}/pulls/${PR_NUM}`, {
                 owner: repo.owner.login,
                 repo: repo.name,
@@ -6099,30 +6099,8 @@ async function main(){
             /*
                 Get list of all files changed in the PR
             */
-
-            if(canContinue){                
-                console.log(`[DEBUG] Requesting Files In PR @ /repos/${repo.owner.login}/${repo.name}/pulls/${PR_NUM}/files`);
-                let pull_request_files = await octokit.request(`GET /repos/${repo.owner.login}/${repo.name}/pulls/${PR_NUM}/files`, {
-                    owner: repo.owner.login,
-                    repo: repo.name,
-                    pull_number: PR_NUM
-                    });
-                            
-                try{
-                    if(pull_request_files)
-                        filesInPR.push(pull_request_files.data.map(itm => {
-                            return { name: itm.filename, sha: itm.sha, status: itm.status, blob: itm.blob_url, raw: itm.raw_url }
-                    }))
-                }catch(error){
-                    console.log(`Failed to extract files in PR. [${error.message}]`);
-                    console.log(JSON.stringify(pull_request_files));
-                    canContinue = false;
-                }finally{
-                    console.log(`[DEBUG] Found ${filesInPR.length} file(s) in PR:${PR_NUM}`);
-                    canContinue = filesInPR.length > 0;
-                }
-            }
-
+                filesInPR = await GetFilesInPR(octokit, repo.owner.login, repo.name, PR_NUM);
+                canContinue = filesInPR > 0; 
             /*
                 Process files found in PR
             */
@@ -6143,8 +6121,28 @@ async function main(){
     }
 }
 
-async function ValidateFilesInPR(data){
-    
+async function GetFilesInPR(_octokit, _owner, _repo, _pr){
+    let filesInPR = [];
+    console.log(`[DEBUG] Requesting Files In PR @ /repos/${_owner}/${_repo}/pulls/${_pr}/files`);
+    let pull_request_files = await _octokit.request(`GET /repos/${_owner}/${_repo}/pulls/${_pr}/files`, {
+        owner: _owner,
+        repo: _repo,
+        pull_number: _pr
+        });
+                
+    try{
+        if(pull_request_files)
+            filesInPR.push(pull_request_files.data.map(itm => {
+                return { name: itm.filename, sha: itm.sha, status: itm.status, blob: itm.blob_url, raw: itm.raw_url }
+        }))
+    }catch(error){
+        console.log(`Failed to extract files in PR. [${error.message}]`);
+        console.log(JSON.stringify(pull_request_files));
+        canContinue = false;
+    }finally{
+        console.log(`[DEBUG] Found ${filesInPR.length} file(s) in PR:${_pr}`);
+        canContinue = filesInPR.length > 0;
+    }
 }
 
 async function run(){
