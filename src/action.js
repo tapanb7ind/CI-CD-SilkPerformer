@@ -56,7 +56,7 @@ async function main(){
                 Get list of all files changed in the PR
             */
                 filesInPR = await GetFilesInPR(octokit, repo.owner.login, repo.name, PR_NUM);
-                canContinue = filesInPR > 0; 
+                canContinue = filesInPR.length > 0; 
             /*
                 Process files found in PR
             */
