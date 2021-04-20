@@ -24,7 +24,7 @@ async function main(){
             console.log(`[DEBUG] Executing as "pull_request". [Pull Request# ${context.payload.number}]`);
             PR_NUM = parseInt(context.payload.number)
             PRTitleValidationRequired = true;
-            regexpattern = escape('IH-\d+:[\w\-]{36}:type\-[data|script]+:.+')
+            regexpattern = '/IH-\\d+:[\\w\\-]{36}:type\\-[data|script]+:.+/'
             break;
         default:            
             console.log(context);
@@ -105,7 +105,7 @@ async function main(){
 
 function GetIhProps(title){    
     try{
-        let regexpattern = '(?<ih>IH\-\d+):(?<testuuid>[\w\-]{36}):type\-(?<updatetype>[data|script]+):(?<rest>.+)'
+        let regexpattern = '(?<ih>IH\\-\\d+):(?<testuuid>[\\w\\-]{36}):type\\-(?<updatetype>[data|script]+):(?<rest>.+)'
         var found = title.match(regexpattern);
         if(found)
             return { IH: found[1], testuuid: found[2], updatetype: found[3], rest: found[4] }
