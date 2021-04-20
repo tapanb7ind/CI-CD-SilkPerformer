@@ -16,10 +16,15 @@ on:
       prTitleTemplate:
         description: 'Regex to validate PR Title'
         required: false
-        default: 'IH-\d+:[\w\-]{36}:type\-[data|script]+:.+' 
+        default: 'IH-\d+:[\w\-]{36}:type\-[data|script]+:.+'
+      AdditionalInfo:
+        description: 'Anything to add to the Workflow run'
+        required: false
+        default: 'Test'
 
 jobs:
-  test:
+  #test:
+    name: ${{ github.event.inputs.AdditionalInfo }} 
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
