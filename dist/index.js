@@ -6046,7 +6046,7 @@ const core= __nccwpck_require__(5);
 const github= __nccwpck_require__(97);
 
 async function main(){
-    console.log('Initializing for function execution...');
+    console.log('[INFO] Initializing for function execution...');
     const GITHUB_TOKEN = core.getInput('GITHUB_TOKEN');    
     const octokit = github.getOctokit(GITHUB_TOKEN);
     console.log('Getting execution context..');
@@ -6082,10 +6082,14 @@ async function main(){
             });            
             if(pull_request){
                 console.log(`[DEBUG] Extracted Pull-Request [${PR_NUM}]`);
-                console.log(JSON.stringify(pull_request));
+                // console.log(JSON.stringify(pull_request));
                 let prdata = pull_request.data;
                 if(prdata){
-                    console.log(prdata);
+                    // console.log(prdata);
+                    let filesInPR = await GetFilesInPR(octokit, repo.owner.login, repo.name, PR_NUM);
+                    if(filesInPR.length > 0){
+                        console.log(`[INFO] Extracted ${filesInPR.length} files in Pull-Request [${PR_NUM}]`);
+                    }
                 }
             }
         }catch(error){
@@ -6093,13 +6097,13 @@ async function main(){
             console.log(`[ERROR] Failed to get PR. [${error.message}]`);
         }
         finally{
-            console.log('Ending function execution...');
+            console.log('[INFO] Ending function execution...');
         }
     }
 }
 
 
-async function GetFilesInPR(pull_request_number, octokit_ref, _owner, _repo, _pull_number){    
+async function GetFilesInPR(octokit_ref, _owner, _repo, _pull_number){    
     let pull_request_files = await octokit_ref.request(`GET /repos/${_owner}/${_repo}/pulls/${_pull_number}/files`, {
         owner: _owner,
         repo: _repo,
