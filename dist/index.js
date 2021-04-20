@@ -6139,6 +6139,16 @@ async function main(){
             */
             if(canContinue){
                 console.log(`[INFO] Extracted ${filesInPR.length} files in Pull-Request [${PR_NUM}]`);
+                let validFileExtensions = [];
+                if(prProps){
+                    console.log(`[DEBUG] Props from PR-Title [IH:${prProps.IH}, Test UUID: ${prProps.testuuid}, Update Type: ${prProps.updatetype}]`);
+                    validFileExtensions = prProps.updatetype.toLowerCase().includes('script') ? scriptTypeAllowedExtensionsCSV : dataTypeAllowedExtensionsCSV;
+                    console.log(`[DEBUG] Validating Files as per props from PR-Title [Allowed Extensions:${validFileExtensions}]`)
+                }
+                else{
+                    core.setFailed(`Failed to get Props to validate files in PR`);
+                    return;
+                }
 
                 /* Validate if any files are from different project folder */
                 console.log(`[DEBUG] Validating if PR contains updates to multiple projects`)
@@ -6147,16 +6157,6 @@ async function main(){
                     console.log(`[DEBUG] Validating file. [${file.name}]`);
                     console.log(file)
                 });
-
-                if(prProps){                    
-                    console.log(`[DEBUG] Props from PR-Title [IH:${prProps.IH}, Test UUID: ${prProps.testuuid}, Update Type: ${prProps.updatetype}]`);
-                    let validFileExtensions = prProps.updatetype.toLowerCase().includes('script') ? scriptTypeAllowedExtensionsCSV : dataTypeAllowedExtensionsCSV;
-                    console.log(`[DEBUG] Validating Files as per props from PR-Title [Allowed Extensions:${validFileExtensions}]`)
-                }
-                else{
-                    core.setFailed(`Failed to get Props to validate files in PR`);
-                    return;
-                }
             }
             else{
                 console.log(`[ERROR] There are 0 files extracted the PR details`)
@@ -6204,10 +6204,13 @@ async function GetFilesInPR(_octokit, _owner, _repo, _pr){
         });
                 
     try{
-        if(pull_request_files)
+        if(pull_request_files){
+            console.log(`[DEBUG] Printing file information for all files in PR`)
             pull_request_files.data.forEach((itm) => {
+                console.log(itm);
                 filesInPR.push({ name: itm.filename, sha: itm.sha, status: itm.status, blob: itm.blob_url, raw: itm.raw_url })
-        })
+            })
+        }
     }catch(error){
         console.log(`Failed to extract files in PR. [${error.message}]`);
         console.log(JSON.stringify(pull_request_files));
