@@ -6102,6 +6102,7 @@ async function main(){
                 prdata = pull_request.data;
                 if(PRTitleValidationRequired){
                     if(ValidatePRTitle(prdata.title, regexpattern)){
+                        console.log(`[DEBUG] PR Title validation successful.[Title:'${prdata.title}', Regex: ${regexpattern}]`)
                         if(prdata)
                             canContinue = true;
                     }
