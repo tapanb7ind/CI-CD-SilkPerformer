@@ -44,10 +44,10 @@ async function GetCommitsInPR(pull_request_number){
 
 async function run(){
     try{
-        console.log('Initializing for function execution...');
+        // console.log('Initializing for function execution...');
         const GITHUB_TOKEN = core.getInput('GITHUB_TOKEN');    
         const octokit = github.getOctokit(GITHUB_TOKEN);
-        console.log('Getting context..');
+        // console.log('Getting context..');
         const { context = {} } = github;
         const { pull_request } =  context.payload;
 
