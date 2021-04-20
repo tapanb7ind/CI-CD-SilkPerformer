@@ -9,8 +9,10 @@ on:
         description: 'PR Number to run against'
         required: false
         default: '8'
-      #tags:
-      #  description: 'Test PRs'  
+      prTitleTemplate:
+        description: 'Regex to validate PR Title'
+        required: false
+        default: '' 
 
 jobs:
   test:
