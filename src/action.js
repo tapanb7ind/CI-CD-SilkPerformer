@@ -11,7 +11,7 @@ async function main(){
     // const { pull_request } =  context.payload;
     let repo =  context.payload.repository;
     let PRTitleValidationRequired = true;
-    let regexpattern = '/(?<ih>IH-\d+):(?<testuuid>[\w\-]{36}):type\-(?<updatetype>[data|script]+):(?<rest>.+)/'    
+    let regexpattern = '/(?<ih>IH\-\d+):(?<testuuid>[\w\-]{36}):type\-(?<updatetype>[data|script]+):(?<rest>.+)/'    
     let PR_NUM = 0;
     switch(context.eventName.toLowerCase()){
         case "workflow_dispatch":
@@ -113,9 +113,12 @@ function GetIhProps(title, regexpattern){
 }
 
 function ValidatePRTitle(title, regexpattern){
+    let found = null;
     try{
-        return title.match(regexpattern).length >= 1;
+        found = title.match(regexpattern);
+        return found.length >= 1;
     }catch(error){
+        console.log(found)
         console.log(`[WARN] Failed to match RegexPattern [${regexpattern}] for pull_request title [${title}]`)
     }
     return false;
