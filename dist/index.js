@@ -6062,13 +6062,13 @@ async function main(){
             console.log(`[DEBUG] Executing as "workflow_dispatch". [Pull Request# ${context.payload.inputs.prNum}]`);
             PR_NUM = parseInt(context.payload.inputs.prNum);
             PRTitleValidationRequired = context.payload.inputs.PRTitleValidationRequired.toLowerCase() === 'true';
-            regexpattern = escape(context.payload.inputs.prTitleTemplate);
+            regexpattern = context.payload.inputs.prTitleTemplate;
             break;
         case "pull_request":
             console.log(`[DEBUG] Executing as "pull_request". [Pull Request# ${context.payload.number}]`);
             PR_NUM = parseInt(context.payload.number)
             PRTitleValidationRequired = true;
-            regexpattern = '/IH-\\d+:[\\w\\-]{36}:type\\-[data|script]+:.+/'
+            regexpattern = 'IH-\\d+:[\\w\\-]{36}:type\\-[data|script]+:.+'
             break;
         default:            
             console.log(context);
