@@ -57,6 +57,7 @@ async function main(){
                     else{
                         canContinue = false;
                         core.setFailed(`PR Title validation failed. [Title:${prdata.title}, Regex: ${context.payload.inputs.prTitleTemplate}]`); 
+                        console.log(JSON.stringify(prdata));
                         return;
                     }
                 }
