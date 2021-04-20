@@ -11,7 +11,7 @@ async function main(){
     // const { pull_request } =  context.payload;
     let repo =  context.payload.repository;
     let PRTitleValidationRequired = true;
-    let regexpattern = '/(?<ih>IH\-\d+):(?<testuuid>[\w\-]{36}):type\-(?<updatetype>[data|script]+):(?<rest>.+)/'    
+    let regexpattern = '(?<ih>IH\-\d+):(?<testuuid>[\w\-]{36}):type\-(?<updatetype>[data|script]+):(?<rest>.+)'    
     let PR_NUM = 0;
     switch(context.eventName.toLowerCase()){
         case "workflow_dispatch":
