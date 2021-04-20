@@ -6103,7 +6103,8 @@ async function main(){
 }
 
 
-async function GetFilesInPR(octokit_ref, _owner, _repo, _pull_number){    
+async function GetFilesInPR(octokit_ref, _owner, _repo, _pull_number){
+    console.log(`[DEBUG] Requesting Files In PR @ /repos/${_owner}/${_repo}/pulls/${_pull_number}/files`);
     let pull_request_files = await octokit_ref.request(`GET /repos/${_owner}/${_repo}/pulls/${_pull_number}/files`, {
         owner: _owner,
         repo: _repo,
@@ -6118,9 +6119,9 @@ async function GetFilesInPR(octokit_ref, _owner, _repo, _pull_number){
         }))
     }catch(error){
         console.log(`Failed to extract files in PR. [${error.message}]`);
-        console.log(pull_request_files)
+        console.log(JSON.stringify(pull_request_files));
     }finally{
-        console.log(`[DEBUG] Found ${filesInPR.length} files in ${_pull_number}`);
+        console.log(`[DEBUG] Found ${filesInPR.length} file(s) in PR:${_pull_number}`);
     }
 }
 
