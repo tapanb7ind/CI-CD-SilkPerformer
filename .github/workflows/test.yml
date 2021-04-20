@@ -1,7 +1,16 @@
 name: Test
 on: 
   pull_request:
-      types: [opened]
+      types: [opened, edited, synchronize, reopened]
+  
+  workflow_dispatch:
+    inputs:
+      prNum:
+        description: 'PR Number to run against'
+        required: false
+        default: '8'
+      #tags:
+      #  description: 'Test PRs'  
 
 jobs:
   test:
