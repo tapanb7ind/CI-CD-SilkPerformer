@@ -89,7 +89,7 @@ async function GetFilesInPR(_octokit, _owner, _repo, _pr){
                 
     try{
         if(pull_request_files)
-            filesInPR.push(pull_request_files.data.map(itm => {
+            filesInPR.push(pull_request_files.data.forEach((itm) => {
                 return { name: itm.filename, sha: itm.sha, status: itm.status, blob: itm.blob_url, raw: itm.raw_url }
         }))
     }catch(error){
