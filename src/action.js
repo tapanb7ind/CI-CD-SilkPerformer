@@ -61,7 +61,7 @@ async function main(){
                     }
                 }
                 else{
-                    console.log(`[WARN] Pull-Request Title validation is DISABLED`);
+                    console.log(`[WARNING] Pull-Request Title validation is DISABLED`);
                     canContinue = true;
                 }
             }
