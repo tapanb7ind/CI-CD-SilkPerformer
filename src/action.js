@@ -38,7 +38,11 @@ async function main(){
             });            
             if(pull_request){
                 console.log(`[DEBUG] Extracted Pull-Request [${PR_NUM}]`);
-                console.log(pull_request);
+                console.log(JSON.stringify(pull_request));
+                let prdata = pull_request.data;
+                if(prdata){
+                    console.log(prdata);
+                }
             }
         }catch(error){
             console.log(repo)
