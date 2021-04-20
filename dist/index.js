@@ -6133,9 +6133,9 @@ async function GetFilesInPR(_octokit, _owner, _repo, _pr){
                 
     try{
         if(pull_request_files)
-            filesInPR.push(pull_request_files.data.forEach((itm) => {
-                return { name: itm.filename, sha: itm.sha, status: itm.status, blob: itm.blob_url, raw: itm.raw_url }
-        }))
+            pull_request_files.data.forEach((itm) => {
+                filesInPR.push({ name: itm.filename, sha: itm.sha, status: itm.status, blob: itm.blob_url, raw: itm.raw_url })
+        })
     }catch(error){
         console.log(`Failed to extract files in PR. [${error.message}]`);
         console.log(JSON.stringify(pull_request_files));
