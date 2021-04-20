@@ -6054,29 +6054,34 @@ async function main(){
     const { context = {} } = github;
     // const { pull_request } =  context.payload;
     let repo =  context.payload.repository;
+    let PRTitleValidationRequired = true;
     let PR_NUM = 0;
     switch(context.eventName.toLowerCase()){
         case "workflow_dispatch":
-            console.log(`[DEBUG] Executing as "workflow_dispatch". [Pull Request# ${context.payload.inputs.prNum}]`);            
+            console.log(`[DEBUG] Executing as "workflow_dispatch". [Pull Request# ${context.payload.inputs.prNum}]`);
             PR_NUM = parseInt(context.payload.inputs.prNum);
+            PRTitleValidationRequired = context.payload.inputs.PRTitleValidationRequired.toLowerCase() === 'true';
             break;
         case "pull_request":
             console.log(`[DEBUG] Executing as "pull_request". [Pull Request# ${context.payload.number}]`);
             PR_NUM = parseInt(context.payload.number)
+            PRTitleValidationRequired = true;
             break;
         default:            
             console.log(context);
             canContinue = false;
-            core.setFailed(`"eventName" [${context.eventName}] is not valid`);            
+            core.setFailed(`"eventName" [${context.eventName}] is not valid`);
             break;
     }
 
     if(isNaN(PR_NUM) || PR_NUM === 0){
         canContinue = false;
-        core.setFailed(`INVALID Pull-Request provided.[PR#${PR_NUM}]`);        
+        core.setFailed(`INVALID Pull-Request provided.[PR#${PR_NUM}]`);  
+        return;      
     }
     else{        
         let prdata = null;
+        let ihProps = null;
         let filesInPR = [];
         canContinue = false;
 
@@ -6093,14 +6098,14 @@ async function main(){
                 console.log(`[DEBUG] Extracted Pull-Request [${PR_NUM}]`);
                 // console.log(JSON.stringify(pull_request));
                 prdata = pull_request.data;
-                if(context.payload.inputs.PRTitleValidationRequired.toLowerCase() === 'true'){
+                if(PRTitleValidationRequired){
                     if(ValidatePRTitle(prdata.title, context.payload.inputs.prTitleTemplate)){
                         if(prdata)
                             canContinue = true;
                     }
                     else{
                         canContinue = false;
-                        core.setFailed(`PR Title validation failed. [Title:'${prdata.title}', Regex: ${context.payload.inputs.prTitleTemplate}]`);                         
+                        core.setFailed(`PR Title validation failed. [Title:'${prdata.title}', Regex: ${context.payload.inputs.prTitleTemplate}]`);
                         return;
                     }
                 }
@@ -6110,6 +6115,7 @@ async function main(){
                 }
             }
 
+            ihProps = GetIhProps(prdata.title);
             /*
                 Get list of all files changed in the PR
             */
@@ -6136,6 +6142,18 @@ async function main(){
             console.log('[INFO] Ending function execution...');
         }
     }
+}
+
+function GetIhProps(title){
+    let regexpattern = '/(?<ih>IH-\d+):(?<testuuid>[\w\-]{36}):type\-(?<updatetype>[data|script]+):(?<rest>.+)/'
+    try{
+        var found = title.match(regexpattern);
+        if(found)
+            return { IH: found[1], testuuid: found[2], updatetype: found[3], rest: found[4] }
+    }catch(error){
+        console.log(`[WARN] Failed to match RegexPattern [${regexpattern}] for pull_request title [${title}]`)
+    }
+    return null;
 }
 
 function ValidatePRTitle(title, regexpattern){
