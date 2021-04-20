@@ -10,8 +10,6 @@ async function main(){
     // const { pull_request } =  context.payload;
     let repo =  context.payload.repository;
     let PR_NUM = 0;
-    console.log(repo);
-    console.log(context);
     switch(context.eventName.toLowerCase()){
         case "workflow_dispatch":
             console.log(`[DEBUG] Executing as "workflow_dispatch". [Pull Request# ${context.payload.inputs.prNum}]`);            
@@ -37,8 +35,11 @@ async function main(){
                 owner: repo.owner.login,
                 repo: repo.name,
                 pull_number: PR_NUM
-            });
-            console.log(`[DEBUG]${pull_request}`);
+            });            
+            if(pull_request){
+                console.log(`[DEBUG] Extracted Pull-Request [${PR_NUM}]`);
+                console.log(pull_request);
+            }
         }catch(error){
             console.log(repo)
             console.log(`[ERROR] Failed to get PR. [${error.message}]`);
@@ -49,14 +50,6 @@ async function main(){
     }
 }
 
-async function GetPRByNumber(pull_request_number){
-    await octokit.rest.pulls.get({
-        owner,
-        repo,
-        pull_number,
-      });
-    return null;
-}
 
 // async function GetCommitsInPR(pull_request_number){
 //     return null;
