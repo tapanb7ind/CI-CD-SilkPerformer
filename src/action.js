@@ -97,7 +97,7 @@ async function GetFilesInPR(_octokit, _owner, _repo, _pr){
         canContinue = false;
     }finally{
         console.log(`[DEBUG] Found ${filesInPR.length} file(s) in PR:${_pr}`);
-        canContinue = filesInPR.length > 0;
+        return filesInPR;
     }
 }
 
