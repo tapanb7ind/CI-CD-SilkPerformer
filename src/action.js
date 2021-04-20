@@ -58,7 +58,7 @@ async function main(){
 
             if(canContinue){                
                 console.log(`[DEBUG] Requesting Files In PR @ /repos/${repo.owner.login}/${repo.name}/pulls/${PR_NUM}/files`);
-                let pull_request_files = await octokit_ref.request(`GET /repos/${repo.owner.login}/${repo.name}/pulls/${PR_NUM}/files`, {
+                let pull_request_files = await octokit.request(`GET /repos/${repo.owner.login}/${repo.name}/pulls/${PR_NUM}/files`, {
                     owner: repo.owner.login,
                     repo: repo.name,
                     pull_number: PR_NUM
