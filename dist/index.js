@@ -6109,6 +6109,7 @@ async function main(){
             }
             else{
                 console.log(`[ERROR] There are 0 files extracted the PR details`)
+                console.log(filesInPR);
                 core.setFailed(`There are 0 files extracted the PR details`); 
             }
         }catch(error){
