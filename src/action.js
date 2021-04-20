@@ -60,8 +60,10 @@ async function main(){
                         return;
                     }
                 }
-                else
+                else{
                     console.log(`[WARN] Pull-Request Title validation is DISABLED`);
+                    canContinue = true;
+                }
             }
 
             /*
