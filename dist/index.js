@@ -6101,6 +6101,7 @@ async function main(){
                     else{
                         canContinue = false;
                         core.setFailed(`PR Title validation failed. [Title:${prdata.title}, Regex: ${context.payload.inputs.prTitleTemplate}]`); 
+                        return;
                     }
                 }
                 else
@@ -6110,8 +6111,10 @@ async function main(){
             /*
                 Get list of all files changed in the PR
             */
+            if(canContinue){
                 filesInPR = await GetFilesInPR(octokit, repo.owner.login, repo.name, PR_NUM);
                 canContinue = filesInPR.length > 0; 
+            }
             /*
                 Process files found in PR
             */
