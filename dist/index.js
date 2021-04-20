@@ -6083,6 +6083,7 @@ async function main(){
             });
             console.log(`[DEBUG]${pull_request}`);
         }catch(error){
+            console.log(repo)
             console.log(`[ERROR] Failed to get PR. [${error.message}]`);
         }
         finally{
