@@ -6054,15 +6054,23 @@ async function main(){
     const { context = {} } = github;
     // const { pull_request } =  context.payload;
     let repo =  context.payload.repository;
+
+    /* Default values required when action is executed on PR activity */
     let PRTitleValidationRequired = true;
     let regexpattern = ''    
+    let scriptTypeAllowedExtensionsCSV = '.bdf,.bdh'
+    let dataTypeAllowedExtensionsCSV = '.csv,.dll,.txt,.exe,.config'
+    /* END */
+
     let PR_NUM = 0;
     switch(context.eventName.toLowerCase()){
         case "workflow_dispatch":
-            console.log(`[DEBUG] Executing as "workflow_dispatch". [Pull Request# ${context.payload.inputs.prNum}]`);
+            console.log(`[DEBUG] Executing as "workflow_dispatch". [Pull Request# ${context.payload.inputs.prNum}]. Default action params will be overwritten`);
             PR_NUM = parseInt(context.payload.inputs.prNum);
             PRTitleValidationRequired = context.payload.inputs.PRTitleValidationRequired.toLowerCase() === 'true';
             regexpattern = context.payload.inputs.prTitleTemplate;
+            scriptTypeAllowedExtensionsCSV = '.bdf,.bdh'
+            dataTypeAllowedExtensionsCSV = '.csv,.dll,.txt,.exe,.config'
             break;
         case "pull_request":
             console.log(`[DEBUG] Executing as "pull_request". [Pull Request# ${context.payload.number}]`);
@@ -6131,9 +6139,19 @@ async function main(){
             */
             if(canContinue){
                 console.log(`[INFO] Extracted ${filesInPR.length} files in Pull-Request [${PR_NUM}]`);
-                if(prProps){
-                    console.log(`[DEBUG] Validating Files as per props from PR-Title`)
-                    console.log(prProps);
+
+                /* Validate if any files are from different project folder */
+                console.log(`[DEBUG] Validating if PR contains updates to multiple projects`)
+                let projectInFile = ''
+                filesInPR.forEach(file => {
+                    console.log(`[DEBUG] Validating file. [${file.name}]`);
+                    console.log(file)
+                });
+
+                if(prProps){                    
+                    console.log(`[DEBUG] Props from PR-Title [IH:${prProps.IH}, Test UUID: ${prProps.testuuid}, Update Type: ${prProps.updatetype}]`);
+                    let validFileExtensions = prProps.updatetype.toLowerCase().includes('script') ? scriptTypeAllowedExtensionsCSV : dataTypeAllowedExtensionsCSV;
+                    console.log(`[DEBUG] Validating Files as per props from PR-Title [Allowed Extensions:${validFileExtensions}]`)
                 }
                 else{
                     core.setFailed(`Failed to get Props to validate files in PR`);
