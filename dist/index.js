@@ -6160,9 +6160,9 @@ function ValidatePRTitle(title, regexpattern){
     let found = null;
     try{
         found = title.match(regexpattern);
-        return found.length >= 1;
-    }catch(error){
         console.log(found)
+        return found.length >= 1;
+    }catch(error){        
         console.log(`[WARN] Failed to match RegexPattern [${regexpattern}] for pull_request title [${title}]`)
     }
     return false;
