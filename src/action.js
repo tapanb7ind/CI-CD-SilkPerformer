@@ -7,7 +7,8 @@ async function main(){
     const octokit = github.getOctokit(GITHUB_TOKEN);
     console.log('Getting execution context..');
     const { context = {} } = github;
-    const { pull_request } =  context.payload;
+    // const { pull_request } =  context.payload;
+    const { repo } =  context.payload.repository;
     let PR_NUM = 0;
 
     switch(context.eventName.toLowerCase()){
@@ -19,24 +20,41 @@ async function main(){
             console.log(`[DEBUG] Executing as "pull_request". [Pull Request# ${context.payload.inputs.prNum}]`);
             PR_NUM = parseInt(context.payload.inputs.prNum)
             break;
-        default:
-            core.setFailed(`"eventName" [${context.eventName}] is not valid`);
+        default:            
+            console.log(context);
+            core.setFailed(`"eventName" [${context.eventName}] is not valid`);            
             break;
     }
 
     if(isNaN(PR_NUM) || PR_NUM === 0){
         core.setFailed(`INVALID Pull-Request provided.[PR#${PR_NUM}]`);
     }
-    else{
-        console.log(`[DEBUG] Pull-Request [${PR_NUM}] number is valid. Continuing with validation`);
-        // await GetCommitsInPR(PR_NUM);
+    else{        
+        try{
+            console.log(`[DEBUG] Pull-Request [${PR_NUM}] number is valid. Extracting PR details`);
+            let pull_request = await octokit.request(`GET /repos/${repo.owner.login}/${repo.name}/pulls/${PR_NUM}`, {
+                owner: repo.owner.login,
+                repo: repo.name,
+                pull_number: PR_NUM
+            });
+            console.log(`[DEBUG]${pull_request}`);
+        }catch(error){
+            console.log(`[ERROR] Failed to get PR. [${error.message}]`);
+        }
+        finally{
+            console.log('Ending function execution...');
+        }
     }
 }
 
-// async function GetPRByNumber(pull_request_number){
-
-//     return null;
-// }
+async function GetPRByNumber(pull_request_number){
+    await octokit.rest.pulls.get({
+        owner,
+        repo,
+        pull_number,
+      });
+    return null;
+}
 
 // async function GetCommitsInPR(pull_request_number){
 //     return null;
