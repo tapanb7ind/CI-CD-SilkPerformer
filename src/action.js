@@ -10,17 +10,17 @@ async function main(){
     const { pull_request } =  context.payload;
     let PR_NUM = 0;
 
-    switch(github.eventName.toLowerCase()){
+    switch(context.eventName.toLowerCase()){
         case "workflow_dispatch":
-            console.log(`[DEBUG] Executing as "workflow_dispatch". [Pull Request# ${github.payload.inputs.prNum}]`);            
-            PR_NUM = parseInt(github.payload.inputs.prNum);
+            console.log(`[DEBUG] Executing as "workflow_dispatch". [Pull Request# ${context.payload.inputs.prNum}]`);            
+            PR_NUM = parseInt(context.payload.inputs.prNum);
             break;
         case "pull_request":
-            console.log(`[DEBUG] Executing as "pull_request". [Pull Request# ${github.payload.inputs.prNum}]`);
-            PR_NUM = parseInt(github.payload.inputs.prNum)
+            console.log(`[DEBUG] Executing as "pull_request". [Pull Request# ${context.payload.inputs.prNum}]`);
+            PR_NUM = parseInt(context.payload.inputs.prNum)
             break;
         default:
-            core.setFailed(`"eventName" [${github.eventName}] is not valid`);
+            core.setFailed(`"eventName" [${context.eventName}] is not valid`);
             break;
     }
 
