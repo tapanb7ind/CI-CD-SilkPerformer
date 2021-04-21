@@ -26,9 +26,9 @@ on:
         required: true
         default: '.csv,.dll,.txt,.exe,.config'
       AdditionalInfo:
-        description: 'Anything to add to the Workflow run'
+        description: 'Overwrite workflow job-name'
         required: false
-        default: 'Test'
+        default: 'PR validation workflow'
 
 jobs:
   Validate:
