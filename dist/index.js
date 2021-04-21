@@ -6047,7 +6047,7 @@ const github= __nccwpck_require__(97);
 
 async function main(){
     let canContinue = true;
-    console.log('[INFO] Initializing for function execution...');
+    core.info('Initializing for function execution...');
     const GITHUB_TOKEN = core.getInput('GITHUB_TOKEN');    
     const octokit = github.getOctokit(GITHUB_TOKEN);
     console.log('Getting execution context..');
@@ -6143,12 +6143,12 @@ async function main(){
                 Process files found in PR
             */
             if(canContinue){
-                console.log(`[INFO] Extracted ${filesInPR.length} files in Pull-Request [${PR_NUM}]`);
+                core.info(`Extracted ${filesInPR.length} files in Pull-Request [${PR_NUM}]`);
                 let validFileExtensions = [];
                 if(prProps){
-                    console.log(`[Debug] Props from PR-Title [IH:${prProps.IH}, Test UUID: ${prProps.testuuid}, Update Type: ${prProps.updatetype}]`);
+                    core.debug(`Props from PR-Title [IH:${prProps.IH}, Test UUID: ${prProps.testuuid}, Update Type: ${prProps.updatetype}]`);
                     validFileExtensions = prProps.updatetype.toLowerCase().includes('script') ? scriptTypeAllowedExtensionsCSV : dataTypeAllowedExtensionsCSV;
-                    console.log(`[Debug] Validating Files as per props from PR-Title [Allowed Extensions:${validFileExtensions}]`)
+                    core.debug(`Validating Files as per props from PR-Title [Allowed Extensions:${validFileExtensions}]`)
                 }
                 else{
                     core.setFailed(`Failed to get Props to validate files in PR`);
@@ -6157,7 +6157,7 @@ async function main(){
                 }
 
                 /* Validate if any files are from different project folder */
-                console.log(`[Debug] Validating if PR contains updates to multiple projects`)
+                core.debug(`Validating if PR contains updates to multiple projects`)
                 let projectInFile = filesInPR.map(item => item.project).filter((value, index, self) => self.indexOf(value) === index)                
                 if(projectInFile.length > 1){
                     canContinue = false;
@@ -6195,28 +6195,29 @@ async function main(){
         finally{
             if(PR_NUM > 0)
                 PostCommentToPR(octokit, repo.owner.login, repo.name, PR_NUM, _reason, _reason === null ? "Completed" : "Failed");
-            console.log('[INFO] Ending function execution...');
+                core.info(`Ending function execution...`);
         }
     }
 }
 
 async function PostCommentToPR(_octokit, _owner, _repo, _pr, reason, reviewStatus){
     let _body = `<b>Initial Review ${reviewStatus}.<b><br/>Reason: ${reason}`
-    console.log(`[Debug] Posting comment for PR#${_pr} @ /repos/${_owner}/${_repo}/pulls/${_pr}/comments`);
-    let response = await _octokit.request(`POST /repos/${_owner}/${_repo}/pulls/${_pr}/comments`, {
-                            owner: _owner,
-                            repo: _repo,
-                            pull_number: _pr,
-                            body: _body
-                        });
-    if(response.data){
-        console.log(`[Debug] Comment ${response.data.body} posted to PR`);
-    }
+    core.debug(`Posting comment for PR#${_pr} @ /repos/${_owner}/${_repo}/pulls/${_pr}/comments`);
+    try{
+        await _octokit.request(`POST /repos/${_owner}/${_repo}/pulls/${_pr}/comments`, {
+                        owner: _owner,
+                        repo: _repo,
+                        pull_number: _pr,
+                        body: _body
+                    });
+    }catch(error){
+        core.warning(`Error posting comment to pr ${error.message}`)
+    }    
 }
 
 function ValidateFiles(filelist, allowedExtensions){
     let validatedFileList = filelist.map(file => {
-                                console.log(`[Debug] Validating file. [${file.name}, type:${file.filetype}]`);                                
+                                core.debug(`Validating file. [${file.name}, type:${file.filetype}]`);                                
                                 file.isAllowedExtension = allowedExtensions.includes(file.filetype);
                                 if(!file.isAllowedExtension)
                                     core.warning(`File extension [${file.filetype}] is invalid as defined in the allowed extensions for this type of Pull-Request`)
@@ -6232,7 +6233,7 @@ function GetIhProps(title){
         if(found)
             return { IH: found[1], testuuid: found[2], updatetype: found[3], rest: found[4] }
     }catch(error){
-        console.log(`[WARN] Failed to match RegexPattern [${regexpattern}] for pull_request title [${title}]`)
+        core.warning(`Failed to match RegexPattern [${regexpattern}] for pull_request title [${title}]`)
     }
     return null;
 }
@@ -6241,14 +6242,14 @@ function ValidatePRTitle(title, regexpattern){
     try{        
         return title.match(regexpattern).length >= 1;
     }catch(error){        
-        console.log(`[WARN] Failed to match RegexPattern [${regexpattern}] for pull_request title [${title}]`)
+        core.warning(`Failed to match RegexPattern [${regexpattern}] for pull_request title [${title}]`)
     }
     return false;
 }
 
 async function GetFilesInPR(_octokit, _owner, _repo, _pr){
     let filesInPR = [];
-    console.log(`[Debug] Requesting Files In PR#${_pr} @ /repos/${_owner}/${_repo}/pulls/${_pr}/files`);
+    core.debug(`Requesting Files In PR#${_pr} @ /repos/${_owner}/${_repo}/pulls/${_pr}/files`);
     let pull_request_files = await _octokit.request(`GET /repos/${_owner}/${_repo}/pulls/${_pr}/files`, {
         owner: _owner,
         repo: _repo,
@@ -6257,7 +6258,7 @@ async function GetFilesInPR(_octokit, _owner, _repo, _pr){
                 
     try{
         if(pull_request_files){
-            console.log(`[Debug] Printing file information for all files in PR`)
+            core.debug(`Printing file information for all files in PR`)
             pull_request_files.data.forEach((itm) => {
                 // console.log(itm);
                 filesInPR.push(
@@ -6273,11 +6274,11 @@ async function GetFilesInPR(_octokit, _owner, _repo, _pr){
             })
         }
     }catch(error){
-        console.log(`Failed to extract files in PR. [${error.message}]`);
+        core.error(`Failed to extract files in PR. [${error.message}]`);
         console.log(JSON.stringify(pull_request_files));
         canContinue = false;
     }finally{
-        console.log(`[Debug] Found ${filesInPR.length} file(s) in PR:${_pr}`);
+        core.debug(`Found ${filesInPR.length} file(s) in PR:${_pr}`);
         return filesInPR;
     }
 }
