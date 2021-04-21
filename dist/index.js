@@ -6208,7 +6208,16 @@ async function GetFilesInPR(_octokit, _owner, _repo, _pr){
             console.log(`[DEBUG] Printing file information for all files in PR`)
             pull_request_files.data.forEach((itm) => {
                 console.log(itm);
-                filesInPR.push({ name: itm.filename, sha: itm.sha, status: itm.status, blob: itm.blob_url, raw: itm.raw_url })
+                filesInPR.push(
+                    { 
+                          name: itm.filename
+                        , sha: itm.sha
+                        , status: itm.status
+                        , blob: itm.blob_url
+                        , raw: itm.raw_url 
+                        , filetype: itm.filename.substr(itm.filename.lastIndexOf('.'))
+                        , project: itm.filename.substr(0,itm.filename.indexOf('/'))
+                    })
             })
         }
     }catch(error){
