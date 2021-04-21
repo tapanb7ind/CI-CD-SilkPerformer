@@ -1,3 +1,14 @@
+/*
+Steps to work on this.
+Set up the project
+    1. run npm install
+For the changes to get implemented when GitHub action executes, it is important to push compiled code
+Steps:
+    1. npm run build
+    2. Sync both index.js and dist/index.js files to git
+*/
+
+
 const core= require('@actions/core');
 const github= require('@actions/github');
 
@@ -73,12 +84,12 @@ async function main(){
                     else{
                         canContinue = false;
                         core.setFailed(`PR Title validation failed. [Title:'${prdata.title}', Regex: ${regexpattern}]`);
-                        _reason = `PR Title validation failed. [Title:'${prdata.title}', Regex: ${regexpattern}]`
+                        _reason = `PR Title validation do not match the required format.`
                         return;
                     }
                 }
                 else{
-                    console.log(`[WARNING] Pull-Request Title validation is DISABLED`);
+                    core.warning(`[WARNING] Pull-Request Title validation is DISABLED`);
                     canContinue = true;
                 }
             }
