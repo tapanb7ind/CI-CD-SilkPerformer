@@ -141,11 +141,14 @@ async function main(){
 }
 
 function ValidateFiles(filelist, updatetype, allowedExtensions){
-    filelist.forEach(file => {
-        console.log(`[DEBUG] Validating file. [${file.name}]`);
-        console.log(file)
-    });
-    return false;
+    let validatedFileList = filelist.map(file => {
+                                console.log(`[DEBUG] Validating file. [${file.name}]`);                                
+                                file.ValidExtension = allowedExtensions.includes(file.filetype);
+                                if(!file.ValidExtension)
+                                    console.log(file)
+                                return file;
+                            });
+    return validatedFileList;
 }
 
 function GetIhProps(title){    
@@ -190,7 +193,7 @@ async function GetFilesInPR(_octokit, _owner, _repo, _pr){
                         , status: itm.status
                         , blob: itm.blob_url
                         , raw: itm.raw_url 
-                        , filetype: itm.filename.substr(itm.filename.lastIndexOf('.') + 1)
+                        , filetype: itm.filename.substr(itm.filename.lastIndexOf('.'))
                         , project: itm.filename.substr(0,itm.filename.indexOf('/'))
                     })
             })
