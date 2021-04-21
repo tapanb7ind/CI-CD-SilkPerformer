@@ -108,11 +108,22 @@ async function main(){
 
                 /* Validate if any files are from different project folder */
                 console.log(`[DEBUG] Validating if PR contains updates to multiple projects`)
-                let projectInFile = ''
-                filesInPR.forEach(file => {
-                    console.log(`[DEBUG] Validating file. [${file.name}]`);
-                    console.log(file)
-                });
+                let projectInFile = filesInPR.map(item => item.project).filter((value, index, self) => self.indexOf(value) === index)                
+                if(projectInFile.length > 1){
+                    canContinue = false;
+                    core.setFailed(`More than 1 project changes are not allowed in a single PR`);
+                    console.log(projectInFile);
+                    filesInPR.forEach(file => {                        
+                        console.log(file)
+                    });
+                    return;
+                }
+                else
+                    canContinue = true;
+                
+                if(canContinue){
+                    ValidateFiles(filesInPR, prProps.updatetype, validFileExtensions);
+                }
             }
             else{
                 console.log(`[ERROR] There are 0 files extracted the PR details`)
@@ -127,6 +138,14 @@ async function main(){
             console.log('[INFO] Ending function execution...');
         }
     }
+}
+
+function ValidateFiles(filelist, updatetype, allowedExtensions){
+    filelist.forEach(file => {
+        console.log(`[DEBUG] Validating file. [${file.name}]`);
+        console.log(file)
+    });
+    return false;
 }
 
 function GetIhProps(title){    
@@ -171,7 +190,7 @@ async function GetFilesInPR(_octokit, _owner, _repo, _pr){
                         , status: itm.status
                         , blob: itm.blob_url
                         , raw: itm.raw_url 
-                        , filetype: itm.filename.substr(itm.filename.lastIndexOf('.'))
+                        , filetype: itm.filename.substr(itm.filename.lastIndexOf('.') + 1)
                         , project: itm.filename.substr(0,itm.filename.indexOf('/'))
                     })
             })
