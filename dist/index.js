@@ -6202,7 +6202,7 @@ async function main(){
 
 async function PostCommentToPR(_octokit, _owner, _repo, _pr, reason, reviewStatus){
     // let _body = `<b>Initial Review ${reviewStatus}.<b><br/>Reason<br/><li>${reason}</li>`
-    let _body=`| Status | Reason |\n| --- | --- \n|\`${reviewStatus}\`| ${reason} |`
+    let _body=`<b> Automated PR Validation</b>\n| Status | Reason |\n| --- | --- \n|\`${reviewStatus}\`| ${reason} |`
     console.log(`[Debug] Posting comment for PR#${_pr} @ /repos/${_owner}/${_repo}/pulls/${_pr}/comments`);
     try{        
         // await _octokit.request(`POST /repos/${_owner}/${_repo}/pulls/${_pr}/comments`, {
