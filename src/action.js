@@ -102,9 +102,9 @@ async function main(){
                 core.info(`Extracted ${filesInPR.length} files in Pull-Request [${PR_NUM}]`);
                 let validFileExtensions = [];
                 if(prProps){
-                    core.debug(`Props from PR-Title [IH:${prProps.IH}, Test UUID: ${prProps.testuuid}, Update Type: ${prProps.updatetype}]`);
+                    console.log(`[Debug] Props from PR-Title [IH:${prProps.IH}, Test UUID: ${prProps.testuuid}, Update Type: ${prProps.updatetype}]`);
                     validFileExtensions = prProps.updatetype.toLowerCase().includes('script') ? scriptTypeAllowedExtensionsCSV : dataTypeAllowedExtensionsCSV;
-                    core.debug(`Validating Files as per props from PR-Title [Allowed Extensions:${validFileExtensions}]`)
+                    console.log(`[Debug] Validating Files as per props from PR-Title [Allowed Extensions:${validFileExtensions}]`)
                 }
                 else{
                     core.setFailed(`Failed to get Props to validate files in PR`);
@@ -113,7 +113,7 @@ async function main(){
                 }
 
                 /* Validate if any files are from different project folder */
-                core.debug(`Validating if PR contains updates to multiple projects`)
+                console.log(`[Debug] Validating if PR contains updates to multiple projects`)
                 let projectInFile = filesInPR.map(item => item.project).filter((value, index, self) => self.indexOf(value) === index)                
                 if(projectInFile.length > 1){
                     canContinue = false;
@@ -158,22 +158,19 @@ async function main(){
 
 async function PostCommentToPR(_octokit, _owner, _repo, _pr, reason, reviewStatus){
     let _body = `<b>Initial Review ${reviewStatus}.<b><br/>Reason: ${reason}`
-    core.debug(`Posting comment for PR#${_pr} @ /repos/${_owner}/${_repo}/pulls/${_pr}/comments`);
-    try{
-        await _octokit.request(`POST /repos/${_owner}/${_repo}/pulls/${_pr}/comments`, {
-                        owner: _owner,
-                        repo: _repo,
-                        pull_number: _pr,
-                        body: _body
-                    });
+    console.log(`[Debug] Posting comment for PR#${_pr} @ /repos/${_owner}/${_repo}/pulls/${_pr}/comments`);
+    try{        
+        // await _octokit.request(`POST /repos/${_owner}/${_repo}/pulls/${_pr}/comments`, {
+        let response = await _octokit.rest.issues.createComment({ owner: _owner, repo: _repo, issue_number: _pr, body: _body });
+        console.log(response);
     }catch(error){
-        core.warning(`Error posting comment to pr ${error.message}`)
+        core.warning(`Error posting comment to pr. [Reason:${error.message}]`)
     }    
 }
 
 function ValidateFiles(filelist, allowedExtensions){
     let validatedFileList = filelist.map(file => {
-                                core.debug(`Validating file. [${file.name}, type:${file.filetype}]`);                                
+                                console.log(`[Debug] Validating file. [${file.name}, type:${file.filetype}]`);                                
                                 file.isAllowedExtension = allowedExtensions.includes(file.filetype);
                                 if(!file.isAllowedExtension)
                                     core.warning(`File extension [${file.filetype}] is invalid as defined in the allowed extensions for this type of Pull-Request`)
@@ -205,7 +202,7 @@ function ValidatePRTitle(title, regexpattern){
 
 async function GetFilesInPR(_octokit, _owner, _repo, _pr){
     let filesInPR = [];
-    core.debug(`Requesting Files In PR#${_pr} @ /repos/${_owner}/${_repo}/pulls/${_pr}/files`);
+    console.log(`[Debug] Requesting Files In PR#${_pr} @ /repos/${_owner}/${_repo}/pulls/${_pr}/files`);
     let pull_request_files = await _octokit.request(`GET /repos/${_owner}/${_repo}/pulls/${_pr}/files`, {
         owner: _owner,
         repo: _repo,
@@ -214,7 +211,7 @@ async function GetFilesInPR(_octokit, _owner, _repo, _pr){
                 
     try{
         if(pull_request_files){
-            core.debug(`Printing file information for all files in PR`)
+            console.log(`[Debug] Printing file information for all files in PR`)
             pull_request_files.data.forEach((itm) => {
                 // console.log(itm);
                 filesInPR.push(
@@ -234,7 +231,7 @@ async function GetFilesInPR(_octokit, _owner, _repo, _pr){
         console.log(JSON.stringify(pull_request_files));
         canContinue = false;
     }finally{
-        core.debug(`Found ${filesInPR.length} file(s) in PR:${_pr}`);
+        console.log(`[Debug] Found ${filesInPR.length} file(s) in PR:${_pr}`);
         return filesInPR;
     }
 }
