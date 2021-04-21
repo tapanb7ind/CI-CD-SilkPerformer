@@ -146,6 +146,7 @@ async function main(){
         }catch(error){
             console.log(`[ERROR] Something was wrong in executing this action. Please check the logs above. [${error.message}]`);
             console.log(`Repo:\n${JSON.stringify(repo)}`);
+            core.setFailed(`There was an error completing the Action Execution`);
         }
         finally{
             if(PR_NUM > 0)
@@ -156,7 +157,7 @@ async function main(){
 }
 
 async function PostCommentToPR(_octokit, _owner, _repo, _pr, reason, reviewStatus){
-    let _body = `<b>Initial Review ${reviewStatus ? reviewStatus : "Failed"}.<b><br/>Reason: ${reason}`
+    let _body = `<b>Initial Review ${reviewStatus}.<b><br/>Reason: ${reason}`
     console.log(`[Debug] Posting comment for PR#${_pr} @ /repos/${_owner}/${_repo}/pulls/${_pr}/comments`);
     let response = await _octokit.request(`POST /repos/${_owner}/${_repo}/pulls/${_pr}/comments`, {
                             owner: _owner,
@@ -174,7 +175,7 @@ function ValidateFiles(filelist, allowedExtensions){
                                 console.log(`[Debug] Validating file. [${file.name}, type:${file.filetype}]`);                                
                                 file.isAllowedExtension = allowedExtensions.includes(file.filetype);
                                 if(!file.isAllowedExtension)
-                                    console.log(`[ERROR] File extension [${file.filetype}] is invalid.`)
+                                    core.warning(`File extension [${file.filetype}] is invalid as defined in the allowed extensions for this type of Pull-Request`)
                                 return file;
                             });
     return validatedFileList;
