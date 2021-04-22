@@ -6157,7 +6157,7 @@ async function main(){
                 Process files found in PR
             */
             if(canContinue){
-                core.info(`Extracted ${filesInPR.length} files in Pull-Request [${PR_NUM}]`);
+                console.log(`Extracted ${filesInPR.length} files in Pull-Request [${PR_NUM}]`);
                 let validFileExtensions = [];
                 if(prProps){
                     console.log(`[Debug] Props from PR-Title [IH:${prProps.IH}, Test UUID: ${prProps.testuuid}, Update Type: ${prProps.updatetype}]`);
@@ -6189,8 +6189,8 @@ async function main(){
                 if(canContinue){
                     let validatedFiles = ValidateFiles(filesInPR, validFileExtensions);
                     if(validatedFiles.find(item => item.isAllowedExtension === false)){
-                        core.setFailed(`1 or more files in the PR are not included in the 'allowed' list [${validFileExtensions}]`);
-                        _reason = `1 or more files in the PR are not included in the 'allowed' list [${validFileExtensions}]`;
+                        core.setFailed(`1 or more files in the PR are not included in the 'allowed' list [${validFileExtensions}] for PR of type '${prProps.updatetype}'`);
+                        _reason = `1 or more files in the PR are not included in the 'allowed' for PR of type '${prProps.updatetype}'`;
                         return;
                     }                    
                 }
@@ -6214,9 +6214,8 @@ async function main(){
     }
 }
 
-async function PostCommentToPR(_octokit, _owner, _repo, _pr, reason, reviewStatus){
-    // let _body = `<b>Initial Review ${reviewStatus}.<b><br/>Reason<br/><li>${reason}</li>`
-    let _body=`<b> Automated PR Validation</b>\n| Status | Reason |\n| --- | --- \n|\`${reviewStatus}\`| ${reason} |`
+async function PostCommentToPR(_octokit, _owner, _repo, _pr, reason, reviewStatus){    
+    let _body=`[${reviewStatus === "Failed" ? "!" : ""}[Automated PR Validation](https://github.com/tapanb7ind/GitHubActionDemo/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/tapanb7ind/GitHubActionDemo/actions/workflows/test.yml)\n| Status | Reason |\n| --- | --- \n|\`${reviewStatus}\`| ${reason} |`
     console.log(`[Debug] Posting comment for PR#${_pr} @ /repos/${_owner}/${_repo}/pulls/${_pr}/comments`);
     try{        
         // await _octokit.request(`POST /repos/${_owner}/${_repo}/pulls/${_pr}/comments`, {
