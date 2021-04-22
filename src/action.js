@@ -73,7 +73,7 @@ async function main(){
             
             if(pull_request){
                 console.log(`[Debug] Extracted Pull-Request [${PR_NUM}]`);
-                // console.log(JSON.stringify(pull_request));
+                console.log(JSON.stringify(pull_request));
                 prdata = pull_request.data;
 
                 console.log(`[Debug] PR Summary:\n\tState:${prdata.state}\n\tCommits:${prdata.commits}\n\tFiles Changed:${prdata.changed_files}\n\tMerge Commit SHA:${prdata.merge_commit_sha}`)
@@ -185,12 +185,16 @@ async function PostCommentToPR(_octokit, _owner, _repo, _pr, reason, reviewStatu
     }    
 }
 
+// async function PostPRStatus(){
+
+// }
+
 function ValidateFiles(filelist, allowedExtensions){
     let validatedFileList = filelist.map(file => {
                                 console.log(`[Debug] Validating file. [${file.name}, type:${file.filetype}]`);                                
                                 file.isAllowedExtension = allowedExtensions.includes(file.filetype);
                                 if(!file.isAllowedExtension)
-                                    core.warning(`File extension [${file.filetype}] is invalid as defined in the allowed extensions for this type of Pull-Request`)
+                                    console.log(`[Warning] File extension [${file.filetype}] is invalid as defined in the allowed extensions for this type of Pull-Request`)
                                 return file;
                             });
     return validatedFileList;
