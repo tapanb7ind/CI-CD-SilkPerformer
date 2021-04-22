@@ -164,7 +164,7 @@ async function main(){
         }
         finally{
             if(PR_NUM > 0)
-                PostCommentToPR(octokit, repo.owner.login, repo.name, PR_NUM, _reason, _reason === null ? "Completed" : "Failed");
+                PostCommentToPR(octokit, repo.owner.login, repo.name, PR_NUM, _reason, _reason === null ? "Completed" : "Failed");                
                 core.info(`Ending function execution...`);
         }
     }
@@ -184,10 +184,6 @@ async function PostCommentToPR(_octokit, _owner, _repo, _pr, reason, reviewStatu
         core.warning(`Error posting comment to pr. [Reason:${error.message}]`)
     }    
 }
-
-// async function PostPRStatus(){
-
-// }
 
 function ValidateFiles(filelist, allowedExtensions){
     let validatedFileList = filelist.map(file => {
