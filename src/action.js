@@ -170,7 +170,7 @@ async function main(){
 }
 
 async function PostCommentToPR(_octokit, _owner, _repo, _pr, reason, reviewStatus){    
-    let _body=`[${reviewStatus === "Failed" ? "!" : ""}[Automated PR Validation](https://github.com/tapanb7ind/GitHubActionDemo/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/tapanb7ind/GitHubActionDemo/actions/workflows/test.yml)\n| Status | Reason |\n| --- | --- \n|\`${reviewStatus}\`| ${reason} |`
+    let _body=`[![Automated PR Validation](https://github.com/tapanb7ind/GitHubActionDemo/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/tapanb7ind/GitHubActionDemo/actions/workflows/test.yml)\n| Status | Reason |\n| --- | --- \n|\`${reviewStatus}\`| ${reason} |`
     console.log(`[Debug] Posting comment for PR#${_pr} @ /repos/${_owner}/${_repo}/pulls/${_pr}/comments`);
     try{        
         // await _octokit.request(`POST /repos/${_owner}/${_repo}/pulls/${_pr}/comments`, {
