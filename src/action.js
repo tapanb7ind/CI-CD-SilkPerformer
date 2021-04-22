@@ -23,7 +23,7 @@ async function main(){
     let _reason = null;
     /* Default values required when action is executed on PR activity */
     let PRTitleValidationRequired = true;
-    let regexpattern = ''    
+    let regexpattern = 'IH-\\d+:[\\w\\-]{36}:type\\-[data|script]+:.+'
     let scriptTypeAllowedExtensionsCSV = '.bdf,.bdh'
     let dataTypeAllowedExtensionsCSV = '.csv,.dll,.txt,.exe,.config'
     /* END */
@@ -35,19 +35,18 @@ async function main(){
             PR_NUM = parseInt(context.payload.inputs.prNum);
             PRTitleValidationRequired = context.payload.inputs.PRTitleValidationRequired.toLowerCase() === 'true';
             regexpattern = context.payload.inputs.prTitleTemplate;
-            scriptTypeAllowedExtensionsCSV = '.bdf,.bdh'
-            dataTypeAllowedExtensionsCSV = '.csv,.dll,.txt,.exe,.config'
+            scriptTypeAllowedExtensionsCSV = context.payload.inputs.scriptTypeAllowedExtensionsCSV
+            dataTypeAllowedExtensionsCSV = context.payload.inputs.dataTypeAllowedExtensionsCSV
             break;
         case "pull_request":
             console.log(`[Debug] Executing as "pull_request". [Pull Request# ${context.payload.number}]`);
-            PR_NUM = parseInt(context.payload.number)
-            PRTitleValidationRequired = true;
-            regexpattern = 'IH-\\d+:[\\w\\-]{36}:type\\-[data|script]+:.+'
+            PR_NUM = parseInt(context.payload.number)            
             break;
         default:            
             console.log(context);
             canContinue = false;
             core.setFailed(`"eventName" [${context.eventName}] is not valid`);
+            return;
             break;
     }
 
