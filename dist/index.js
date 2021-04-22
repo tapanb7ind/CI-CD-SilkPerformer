@@ -6119,7 +6119,7 @@ async function main(){
                 console.log(JSON.stringify(pull_request));
                 prdata = pull_request.data;
 
-                console.log(`[Debug] PR Summary:\n\tState:${prdata.state}\n\tCommits:${prdata.commits}\n\tFiles Changed:${prdata.changed_files}\n\tMerge Commit SHA:${prdata.merge_commit_sha}`)
+                console.log(`[Debug] PR Summary:\n\tState:${prdata.state}\n\tCommits:${prdata.commits}\n\tFiles Changed:${prdata.changed_files}\n\tMerge Commit SHA:${prdata.merge_commit_sha}\n\t${prdata.head.ref} -> ${prdata.base.ref}`)
 
                 if(PRTitleValidationRequired){
                     if(ValidatePRTitle(prdata.title, regexpattern)){
