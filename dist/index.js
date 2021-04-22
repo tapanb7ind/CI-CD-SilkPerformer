@@ -6119,6 +6119,9 @@ async function main(){
                 console.log(`[Debug] Extracted Pull-Request [${PR_NUM}]`);
                 // console.log(JSON.stringify(pull_request));
                 prdata = pull_request.data;
+
+                console.log(`[Debug] PR Summary:\n\tState:${prdata.state}\n\tCommits:${prdata.commits}\n\tFiles Changed:${prdata.changed_files}\n\tMerge Commit SHA:${prdata.merge_commit_sha}`)
+
                 if(PRTitleValidationRequired){
                     if(ValidatePRTitle(prdata.title, regexpattern)){
                         console.log(`[Debug] PR Title validation successful.[Title:'${prdata.title}', Regex: ${regexpattern}]`)
@@ -6218,7 +6221,10 @@ async function PostCommentToPR(_octokit, _owner, _repo, _pr, reason, reviewStatu
     try{        
         // await _octokit.request(`POST /repos/${_owner}/${_repo}/pulls/${_pr}/comments`, {
         let response = await _octokit.rest.issues.createComment({ owner: _owner, repo: _repo, issue_number: _pr, body: _body });
-        console.log(response);
+        if(response.status !== 201){
+            core.warning(`Failed to post comment to PR`);
+            console.log(response);
+        }
     }catch(error){
         core.warning(`Error posting comment to pr. [Reason:${error.message}]`)
     }    
