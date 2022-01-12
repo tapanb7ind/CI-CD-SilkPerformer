@@ -8,6 +8,8 @@ Each product will have a separate branch. The base (Lightning) branch will be pr
 2. Allowed to create PR for datafiles
 
 
+Refer to [this comment](https://github.com/tapanb7ind/GitHubActionDemo/pull/11#issuecomment-824879663 "Comment Sample") for a comment sample.
+
 
 ## Goal ##
 1. Let engineers edit and push script/data file changes to repo. These changes are for E2E/sandbox environment.
