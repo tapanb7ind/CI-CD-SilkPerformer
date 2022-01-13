@@ -13,7 +13,7 @@ Refer to [this comment](https://github.com/tapanb7ind/GitHubActionDemo/pull/11#i
 
 ## Goal ##
 1. Let engineers edit and push script/data file changes to repo. These changes are for E2E/sandbox environment.
-2. Any changes to scrits/data files for Lightning environment should be approved and merged after PR review.
+2. Any changes to scrits/data files for final release environment (pre-prod/performance) should be approved and merged after PR review.
 
 
 
@@ -46,7 +46,7 @@ In this case add a read me file to this specific folder adding detais about the 
 - [ ] step1: Create a new branch from E2E branch
 - [ ] step2: Update script(s)
 - [ ] step3: Push script changes to this new branch
-- [ ] step4: Initiate test run using OCX (optional)
+- [ ] step4: Initiate test run using on-demand Performance testing tool (optional)
 - [ ] step5: Check results. On error go to step2.
 - [ ] step6: When no error, create PR to E2E branch. Provide mandatory information required for PR
 - [ ] step7: Review and merge changes
@@ -55,7 +55,7 @@ In this case add a read me file to this specific folder adding detais about the 
 Follow the next steps to push these changes to Develop/Lightning branch. ***Next steps requires the Lightning environment to be updated to support the script changes***
 - [ ] step9: Create new branch from Develop/Lightning branch
 - [ ] step10: Commit script changes to this branch
-- [ ] step11: Initiate test run using OCX
+- [ ] step11: Initiate test run using on-demand performance testing tool
 - [ ] step12: Check resuts. On error go to step #10 and verify scripts/errors on local machine
 - [ ] step13: When no error, create PR to Lightning branch. Provide mandatory information required for PR
 - [ ] step14: Review and merge changes
